@@ -63,7 +63,9 @@ export class Store {
         set: (val) => {
           state[key] = val;
           //observer는 cb의 값
-          this.observers[key].forEach(observer => observer(val))
+          if (Array.isArray(this.observers[key])){
+            this.observers[key].forEach(observer => observer(val))
+          }
         },
       });
     }
