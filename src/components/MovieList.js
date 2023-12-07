@@ -1,5 +1,6 @@
 import { Component } from "../core/heropy";
 import movieStore from "../store/movie";
+import MovieItem from './MovieItem'
 
 export default class MovieList extends Component {
   constructor() {
@@ -17,8 +18,10 @@ export default class MovieList extends Component {
     const moviesEl = this.el.querySelector(".movies");
     moviesEl.append(
       //map() 배열데이터에서 사용, 앞의 배열데이터를 기준으로 callback 함수를 반복 실행, 반환 후 재배정
-      movieStore.state.movies.map((movie) => {
-        return movie.Title;
+      ...movieStore.state.movies.map((movie) => {
+        return new MovieItem({
+          movie: movie
+        }).el;
       })
     );
   }

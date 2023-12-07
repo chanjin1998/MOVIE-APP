@@ -27,7 +27,7 @@ export default class Search extends Component {
     });
     const btnEl = this.el.querySelector(".btn");
     btnEl.addEventListener("click", () => {
-      if (movieStore.state.searchText.trim()) {
+      if (event.key === "Enter" && movieStore.state.searchText.trim()) {
         searchMovies(1)
       }
     }); 

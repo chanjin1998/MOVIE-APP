@@ -661,7 +661,7 @@ class Store {
             set: (val)=>{
                 state[key] = val;
                 //observer는 cb의 값
-                this.observers[key].forEach((observer)=>observer(val));
+                if (Array.isArray(this.observers[key])) this.observers[key].forEach((observer)=>observer(val));
             }
         });
     }
@@ -730,17 +730,20 @@ var _headline = require("../components/Headline");
 var _headlineDefault = parcelHelpers.interopDefault(_headline);
 var _search = require("../components/Search");
 var _searchDefault = parcelHelpers.interopDefault(_search);
+var _movieList = require("../components/MovieList");
+var _movieListDefault = parcelHelpers.interopDefault(_movieList);
 class Home extends (0, _heropy.Component) {
     render() {
         const headline = new (0, _headlineDefault.default)().el;
         const search = new (0, _searchDefault.default)().el;
+        const movieList = new (0, _movieListDefault.default)().el;
         this.el.classList.add("container");
-        this.el.append(headline, search);
+        this.el.append(headline, search, movieList);
     }
 }
 exports.default = Home;
 
-},{"../core/heropy":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../components/Headline":"gaVgo","../components/Search":"jqPPz"}],"gaVgo":[function(require,module,exports) {
+},{"../core/heropy":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../components/Headline":"gaVgo","../components/Search":"jqPPz","../components/MovieList":"8UDl3"}],"gaVgo":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _heropy = require("../core/heropy");
@@ -767,6 +770,8 @@ exports.default = Headline;
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _heropy = require("../core/heropy");
+var _movie = require("../store/movie");
+var _movieDefault = parcelHelpers.interopDefault(_movie);
 class Search extends (0, _heropy.Component) {
     render() {
         this.el.classList.add("search");
@@ -776,20 +781,109 @@ class Search extends (0, _heropy.Component) {
         Search
       </button> 
     `;
+        // search 컴포넌트에서 검색을 한 다음에 영화목록에 데이터를 가져오기만 하는것이 아니고
+        // 그 데이터를 화면에 실제 보여지는 요소로 출력을 해야한다.
+        // 그 화면의 출력은 Movielist를 새로 만들어야한다, 다른 컴포넌트에서 같은 개념을 취급해야하는 Store 필요
         const inputEl = this.el.querySelector("input");
         inputEl.addEventListener("input", ()=>{
-        //
+            (0, _movieDefault.default).state.searchText = inputEl.value;
         });
-        inputEl.addEventListener("keydown", (event)=>{
-            event.key;
+        inputEl.addEventListener("keydown", (event1)=>{
+            // Enter키를 누르고 검색내용이 있는 경우에만 작동
+            // trim의 기능 => 값이 존재하는 경우에만 엔터 작동
+            if (event1.key === "Enter" && (0, _movieDefault.default).state.searchText.trim()) (0, _movie.searchMovies)(1);
         });
         const btnEl = this.el.querySelector(".btn");
         btnEl.addEventListener("click", ()=>{
-        //
+            if (event.key === "Enter" && (0, _movieDefault.default).state.searchText.trim()) (0, _movie.searchMovies)(1);
         });
     }
 }
 exports.default = Search;
+
+},{"../core/heropy":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../store/movie":"kq1bo"}],"kq1bo":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "searchMovies", ()=>searchMovies);
+var _heropy = require("../core/heropy");
+const store = new (0, _heropy.Store)({
+    searchText: "",
+    page: 1,
+    movies: []
+});
+exports.default = store;
+const searchMovies = async (page)=>{
+    if (page === 1) {
+        store.state.page = 1;
+        store.state.movies = [];
+    }
+    // 비동기로 동작하니까 await를 사용해서 fetch 함수를 서버로 갔다올 때 기다려야함
+    // 동작 순서 : omdb 페이지로 검색 결과를 전송 -> json으로 받아서 콘솔에 출력
+    const res = await fetch(`https://omdbapi.com?apikey=7035c60c&s=${store.state.searchText}&page=${page}`);
+    const { Search } = await res.json();
+    // 1페이지의 영화정보와 2페이지의 정보를 Search로 받아온다. 3,4, 계속 받아옴
+    store.state.movies = [
+        ...store.state.movies,
+        ...Search
+    ];
+};
+
+},{"../core/heropy":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8UDl3":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _heropy = require("../core/heropy");
+var _movie = require("../store/movie");
+var _movieDefault = parcelHelpers.interopDefault(_movie);
+var _movieItem = require("./MovieItem");
+var _movieItemDefault = parcelHelpers.interopDefault(_movieItem);
+class MovieList extends (0, _heropy.Component) {
+    constructor(){
+        super();
+        (0, _movieDefault.default).subscribe("movies", ()=>{
+            this.render();
+        });
+    }
+    render() {
+        this.el.classList.add("movie-list");
+        this.el.innerHTML = /*html*/ `
+      <div class='movies'></div>
+    `;
+        const moviesEl = this.el.querySelector(".movies");
+        moviesEl.append(//map() 배열데이터에서 사용, 앞의 배열데이터를 기준으로 callback 함수를 반복 실행, 반환 후 재배정
+        ...(0, _movieDefault.default).state.movies.map((movie)=>{
+            return new (0, _movieItemDefault.default)({
+                movie: movie
+            }).el;
+        }));
+    }
+}
+exports.default = MovieList;
+
+},{"../core/heropy":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../store/movie":"kq1bo","./MovieItem":"fAzE8"}],"fAzE8":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _heropy = require("../core/heropy");
+class MovieItem extends (0, _heropy.Component) {
+    constructor(props){
+        super({
+            props,
+            tagName: "a"
+        });
+    }
+    render() {
+        const { movie } = this.props;
+        this.el.setAttribute("href", `#/movie?id${movie.imdbID}`);
+        this.el.classList.add("movie");
+        this.el.style.backgroundImage = `url(${movie.Poster})`;
+        this.el.innerHTML = /*html*/ `
+      <div class='info'>
+        <div class='year'>${movie.Year}</div>
+        <div class='title'>${movie.Title}</div>
+      </div>
+    `;
+    }
+}
+exports.default = MovieItem;
 
 },{"../core/heropy":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["3zq8u","gLLPy"], "gLLPy", "parcelRequire6588")
 
