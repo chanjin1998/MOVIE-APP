@@ -10,11 +10,12 @@ export default class MovieListMore extends Component {
       // movieStore.state.page
       // movieStore.state.pageMax
       const { page, pageMax } = movieStore.state;
-      if (pageMax > page) {
-        this.el.classList.remove("hide");
-      } else {
-        this.el.classList.add("hide");
-      }
+      (pageMax > page) ? this.el.classList.remove("hide"): this.el.classList.add("hide")
+      // if (pageMax > page) {
+      //   this.el.classList.remove("hide");
+      // } else {
+      //   this.el.classList.add("hide");
+      // }
     });
   }
   render() {
