@@ -96,21 +96,21 @@ body {
   max-width: 150px;
 }
 
-.movie-list{
+.movie-list {
   padding: 20px;
   border-radius: 4px;
   background-color: var(--color-black);
 }
 
-.movie-list .movies{
+.movie-list .movies {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 20px;
 }
 
-.movies .movie{
-  --width:200px;
+.movies .movie {
+  --width: 200px;
   width: var(--width);
   height: calc(var(--width) * 3 / 2);
   border-radius: 4px;
@@ -120,8 +120,8 @@ body {
   position: relative;
 }
 
-.movies .movie:hover::after{
-  content: '';
+.movies .movie:hover::after {
+  content: "";
   position: absolute;
   top: 0;
   bottom: 0;
@@ -130,7 +130,7 @@ body {
   border: 6px solid var(--color-primary);
 }
 
-.movies .movie .info{
+.movies .movie .info {
   width: 100%;
   padding: 14px;
   box-sizing: border-box;
@@ -139,6 +139,22 @@ body {
   position: absolute;
   left: 0;
   bottom: 0;
-  background-color: rgba(14,17,27,.3);
+  background-color: rgba(14, 17, 27, 0.3);
   backdrop-filter: blur(10px);
+}
+.movies .movie .info .year {
+  color: var(--color-primary);
+}
+.movies .movie .info .title {
+  color: var(--color-white);
+}
+
+.view-more {
+  width: 100%;
+  max-width: 300px;
+  margin: 20px auto;
+  display: block;
+}
+.view-more.hide {
+  display: none;
 }
