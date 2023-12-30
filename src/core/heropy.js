@@ -29,7 +29,7 @@ function routeRender(routes) {
     acc[key] = value;
     return acc;
   }, {});
-  history.replaceState(query, "", "");
+  history.replaceState(query, "");// (상태, 제목)
 
   const currentRoute = routes.find((route) =>
     new RegExp(`${route.path}/?$`).test(hash)
@@ -63,8 +63,8 @@ export class Store {
         set: (val) => {
           state[key] = val;
           //observer는 cb의 값
-          if (Array.isArray(this.observers[key])){
-            this.observers[key].forEach(observer => observer(val))
+          if (Array.isArray(this.observers[key])) {
+            this.observers[key].forEach((observer) => observer(val));
           }
         },
       });
@@ -78,9 +78,9 @@ export class Store {
     // version2 { message : [() => {}, ()=> {}, () => {}]} 메세지의 객체를 여러개 만들어주기 위해 배열 데이터 생성
     // push값은 배열 데이터에서만 사용 가능
     // Array.isArray()를 통해서 인자값이 배열데이터라면 ? 뒤를 실행하고 아니라면 : 뒤를 실행한다.
-    Array.isArray(this.observers[key]) 
-    ? this.observers[key].push(cb)
-    : this.observers[key] = [cb];
+    Array.isArray(this.observers[key])
+      ? this.observers[key].push(cb)
+      : (this.observers[key] = [cb]);
   }
 }
 
