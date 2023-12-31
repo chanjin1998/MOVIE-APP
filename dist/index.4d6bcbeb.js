@@ -635,7 +635,7 @@ function routeRender(routes) {
         acc[key] = value;
         return acc;
     }, {});
-    history.replaceState(query, "", "");
+    history.replaceState(query, ""); // (상태, 제목)
     const currentRoute = routes.find((route)=>new RegExp(`${route.path}/?$`).test(hash));
     routerView.innerHTML = "";
     routerView.append(new currentRoute.component().el);
@@ -857,8 +857,13 @@ const searchMovies = async (page)=>{
 };
 const getMovieDetails = async (id)=>{
     try {
-        //by id or title(omdb api)이기 때문에 &i 사용
         const res = await fetch(`https://omdbapi.com?apikey=7035c60c&i=${id}&plot=full`);
+        // const res = await fetch('/api/movie', {
+        //   method: 'POST',
+        //   body: JSON.stringify({
+        //     id
+        //   })
+        // })
         store.state.movie = await res.json();
     } catch (error) {
         console.log("getMovieDetails error:", error);
@@ -919,13 +924,17 @@ class MovieItem extends (0, _heropy.Component) {
     }
     render() {
         const { movie } = this.props;
-        this.el.setAttribute("href", `#/movie?id${movie.imdbID}`);
+        this.el.setAttribute("href", `#/movie?id=${movie.imdbID}`);
         this.el.classList.add("movie");
         this.el.style.backgroundImage = `url(${movie.Poster})`;
-        this.el.innerHTML = /*html*/ `
-      <div class='info'>
-        <div class='year'>${movie.Year}</div>
-        <div class='title'>${movie.Title}</div>
+        this.el.innerHTML = /* html */ `
+      <div class="info">
+        <div class="year">
+          ${movie.Year}
+        </div>
+        <div class="title">
+          ${movie.Title}
+        </div>
       </div>
     `;
     }
@@ -975,7 +984,51 @@ var _movieDefault = parcelHelpers.interopDefault(_movie);
 class Movie extends (0, _heropy.Component) {
     async render() {
         await (0, _movie.getMovieDetails)(history.state.id);
-        console.log((0, _movieDefault.default).state.movie);
+        console.log((0, _movieDefault.default).state.movie.Title);
+        const { movie } = (0, _movieDefault.default).state;
+        this.el.classList.add("container", "the-movie");
+        this.el.innerHTML = /*html*/ `
+      <div 
+        style="background-image: url(${movie.Poster})" 
+        class="poster"></div>
+      <div class="specs">
+        <div class="title">
+          ${movie.Title}
+        </div>
+        <div class='labels'>
+          <span>${movie.Released}</span>
+          &nbsp;/&nbsp;
+          <span>${movie.Runtime}</span>
+          &nbsp;/&nbsp;
+          <span>${movie.Country}</span>
+        </div>
+        <div class='plot'>
+          ${movie.Plot}
+        </div>
+        <div>
+          <h3>Ratings</h3>
+          ${movie.Ratings.map((rating)=>{
+            return `<p>${rating.Source} - ${rating.Value}</p>`;
+        }).join("")}
+        </div>
+        <div>
+          <h3>Actors</h3>
+          <p>${movie.Actors}</p>
+        </div>
+        <div>
+          <h3>Director</h3>
+          <p>${movie.Director}</p>
+        </div>
+        <div>
+          <h3>Production</h3>
+          <p>${movie.Production}</p>
+        </div>
+        <div>
+          <h3>Genre</h3>
+          <p>${movie.Genre}</p>
+        </div>
+      </div>
+    `;
     }
 }
 exports.default = Movie;
