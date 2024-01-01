@@ -6,11 +6,12 @@ export default class Movie extends Component {
     await getMovieDetails(history.state.id);
     console.log(movieStore.state.movie.Title);
     const { movie } = movieStore.state;
+    const bigPoster = movie.Poster.replace("SX300", "SX700"); // 사진 고해상도로 바꿔주기
 
     this.el.classList.add("container", "the-movie");
     this.el.innerHTML = /*html*/ `
       <div 
-        style="background-image: url(${movie.Poster})" 
+        style="background-image: url(${bigPoster})" 
         class="poster"></div>
       <div class="specs">
         <div class="title">
@@ -28,9 +29,9 @@ export default class Movie extends Component {
         </div>
         <div>
           <h3>Ratings</h3>
-          ${movie.Ratings.map(rating => {
-            return `<p>${rating.Source} - ${rating.Value}</p>`
-          }).join('')}
+          ${movie.Ratings.map((rating) => {
+            return `<p>${rating.Source} - ${rating.Value}</p>`;
+          }).join("")}
         </div>
         <div>
           <h3>Actors</h3>
