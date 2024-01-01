@@ -1,11 +1,12 @@
 import { Component } from "../core/heropy";
-import movieStore, {searchMovies} from '../store/movie'
+import movieStore, { searchMovies } from "../store/movie";
 
 export default class Search extends Component {
   render() {
     this.el.classList.add("search");
     this.el.innerHTML = /*html*/ `
-      <input placeholder = 'Enter the move title to search'/>
+      <!-- 뒤로가기 해도 검색어 남아있게 하기 -->
+      <input value ="${movieStore.state.searchText}"placeholder = 'Enter the move title to search'/>
       <button class='btn btn-primary'>
         Search
       </button> 
@@ -16,20 +17,20 @@ export default class Search extends Component {
 
     const inputEl = this.el.querySelector("input");
     inputEl.addEventListener("input", () => {
-      movieStore.state.searchText = inputEl.value
+      movieStore.state.searchText = inputEl.value;
     });
     inputEl.addEventListener("keydown", (event) => {
       // Enter키를 누르고 검색내용이 있는 경우에만 작동
       // trim의 기능 => 값이 존재하는 경우에만 엔터 작동
       if (event.key === "Enter" && movieStore.state.searchText.trim()) {
-        searchMovies(1)
+        searchMovies(1);
       }
     });
     const btnEl = this.el.querySelector(".btn");
     btnEl.addEventListener("click", () => {
       if (event.key === "Enter" && movieStore.state.searchText.trim()) {
-        searchMovies(1)
+        searchMovies(1);
       }
-    }); 
+    });
   }
 }
