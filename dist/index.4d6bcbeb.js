@@ -590,15 +590,21 @@ root.append(new (0, _appDefault.default)().el);
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _heropy = require("./core/heropy");
+var _theHeader = require("./components/TheHeader");
+var _theHeaderDefault = parcelHelpers.interopDefault(_theHeader);
+var _theFooter = require("./components/TheFooter");
+var _theFooterDefault = parcelHelpers.interopDefault(_theFooter);
 class App extends (0, _heropy.Component) {
     render() {
+        const theHeader = new (0, _theHeaderDefault.default)().el;
+        const theFooter = new (0, _theFooterDefault.default)().el;
         const routerView = document.createElement("router-view");
-        this.el.append(routerView);
+        this.el.append(theHeader, routerView, theFooter);
     }
 }
 exports.default = App;
 
-},{"./core/heropy":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"57bZf":[function(require,module,exports) {
+},{"./core/heropy":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./components/TheHeader":"3Cyq4","./components/TheFooter":"b3x3c"}],"57bZf":[function(require,module,exports) {
 // Component
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -709,7 +715,99 @@ exports.export = function(dest, destName, get) {
     });
 };
 
-},{}],"3L9mC":[function(require,module,exports) {
+},{}],"3Cyq4":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _heropy = require("../core/heropy");
+class TheHeader extends (0, _heropy.Component) {
+    constructor(){
+        super({
+            tagName: "header",
+            state: {
+                menus: [
+                    {
+                        name: "Search",
+                        href: "#/"
+                    },
+                    {
+                        name: "Movie",
+                        href: "#/movie"
+                    },
+                    {
+                        name: "About",
+                        href: "#/about"
+                    }
+                ]
+            }
+        });
+        // 브라우저의 상태 변화에 대응하여 페이지를 다시 렌더링하
+        // 페이지의 상태가 변경될 때마다 render 함수가 호출되어
+        // 해당 상태에 따른 화면 갱신이 이루어짐
+        window.addEventListener("popstate", ()=>{
+            this.render();
+        });
+    }
+    render() {
+        this.el.innerHTML = /*html*/ `
+      <a 
+      href="#/" 
+      class="logo">
+      <span>OMDbAPI</span>.COM</a>
+      <nav>
+        <ul>
+          ${this.state.menus.map((menu)=>{
+            const href = menu.href.split("?")[0];
+            const hash = location.hash.split("?")[0];
+            const isActive = href === hash;
+            return /*html*/ `
+              <li>
+                <a
+                  class="${isActive ? "active" : ""}" 
+                  href="${menu.href}">
+                  ${menu.name}
+                </a>
+              </li>
+            `;
+        }).join("")}
+        </ul>
+      </nav>
+      <a href="#/about" class="user">
+        <img src="../images/\u{D504}\u{C0AC}.jpeg" alt="User" />
+      </a>
+    `;
+    }
+}
+exports.default = TheHeader;
+
+},{"../core/heropy":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"b3x3c":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _heropy = require("../core/heropy");
+class TheFooter extends (0, _heropy.Component) {
+    constructor(){
+        super({
+            tagName: "footer"
+        });
+    }
+    render() {
+        this.el.innerHTML = /*html*/ `
+      <div>
+        <a href="https://github.com/chanjin1998/MOVIE-APP">
+          GitHub Repository
+        </a>
+      </div>
+      <div>
+        <a href="https://github.com/chanjin1998">
+          ${new Date().getFullYear()}
+          ChanJin
+        </a>
+      </div>
+    `;
+    }
+}
+exports.default = TheFooter;
+
+},{"../core/heropy":"57bZf","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3L9mC":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _heropy = require("../core/heropy");
@@ -785,7 +883,8 @@ class Search extends (0, _heropy.Component) {
     render() {
         this.el.classList.add("search");
         this.el.innerHTML = /*html*/ `
-      <input placeholder = 'Enter the move title to search'/>
+      <!-- \u{B4A4}\u{B85C}\u{AC00}\u{AE30} \u{D574}\u{B3C4} \u{AC80}\u{C0C9}\u{C5B4} \u{B0A8}\u{C544}\u{C788}\u{AC8C} \u{D558}\u{AE30} -->
+      <input value ="${(0, _movieDefault.default).state.searchText}"placeholder = 'Enter the move title to search'/>
       <button class='btn btn-primary'>
         Search
       </button> 
@@ -857,13 +956,8 @@ const searchMovies = async (page)=>{
 };
 const getMovieDetails = async (id)=>{
     try {
+        //by id or title(omdb api)이기 때문에 &i 사용
         const res = await fetch(`https://omdbapi.com?apikey=7035c60c&i=${id}&plot=full`);
-        // const res = await fetch('/api/movie', {
-        //   method: 'POST',
-        //   body: JSON.stringify({
-        //     id
-        //   })
-        // })
         store.state.movie = await res.json();
     } catch (error) {
         console.log("getMovieDetails error:", error);
@@ -927,14 +1021,10 @@ class MovieItem extends (0, _heropy.Component) {
         this.el.setAttribute("href", `#/movie?id=${movie.imdbID}`);
         this.el.classList.add("movie");
         this.el.style.backgroundImage = `url(${movie.Poster})`;
-        this.el.innerHTML = /* html */ `
-      <div class="info">
-        <div class="year">
-          ${movie.Year}
-        </div>
-        <div class="title">
-          ${movie.Title}
-        </div>
+        this.el.innerHTML = /*html*/ `
+      <div class='info'>
+        <div class='year'>${movie.Year}</div>
+        <div class='title'>${movie.Title}</div>
       </div>
     `;
     }
@@ -983,13 +1073,21 @@ var _movie = require("../store/movie");
 var _movieDefault = parcelHelpers.interopDefault(_movie);
 class Movie extends (0, _heropy.Component) {
     async render() {
+        this.el.classList.add("container", "the-movie");
+        this.el.innerHTML = /*html*/ `
+      <div class="poster skeleton"></div>
+      <div class="specs">
+        <div class="title skeleton"></div>
+        <div class="labels skeleton"></div>
+        <div class="plot skeleton"></div>
+      </div>`;
         await (0, _movie.getMovieDetails)(history.state.id);
         console.log((0, _movieDefault.default).state.movie.Title);
         const { movie } = (0, _movieDefault.default).state;
-        this.el.classList.add("container", "the-movie");
+        const bigPoster = movie.Poster.replace("SX300", "SX700"); // 사진 고해상도로 바꿔주기
         this.el.innerHTML = /*html*/ `
       <div 
-        style="background-image: url(${movie.Poster})" 
+        style="background-image: url(${bigPoster})" 
         class="poster"></div>
       <div class="specs">
         <div class="title">
