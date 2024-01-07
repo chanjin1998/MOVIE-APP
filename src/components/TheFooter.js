@@ -1,24 +1,26 @@
-import {Component} from '../core/heropy'
+import { Component } from "../core/heropy";
+import aboutStore from "../store/about";
 
-export default class TheFooter extends Component{
+export default class TheFooter extends Component {
   constructor() {
     super({
-      tagName:'footer',
-    })
+      tagName: "footer",
+    });
   }
-  render(){
+  render() {
+    const { github, repository } = aboutStore.state;
     this.el.innerHTML = /*html*/ `
       <div>
-        <a href="https://github.com/chanjin1998/MOVIE-APP">
+        <a href="${repository}">
           GitHub Repository
         </a>
       </div>
       <div>
-        <a href="https://github.com/chanjin1998">
+        <a href="${github}">
           ${new Date().getFullYear()}
           ChanJin
         </a>
       </div>
-    `
-  } 
+    `;
+  }
 }
