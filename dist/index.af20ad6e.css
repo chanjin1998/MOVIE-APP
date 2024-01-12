@@ -24,6 +24,18 @@ body {
   padding: 40px 0;
 }
 
+@media (width <= 1200px) {
+  .container {
+    padding: 40px;
+  }
+}
+
+@media (width <= 600px) {
+  .container {
+    padding: 40px 20px;
+  }
+}
+
 .btn {
   color: var(--color-white);
   background-color: var(--color-area);
@@ -165,6 +177,20 @@ header .user img {
   width: 100%;
 }
 
+@media (width <= 600px) {
+  header {
+    padding: 14px 20px;
+  }
+
+  header nav {
+    display: none;
+  }
+
+  header .user {
+    right: 20px;
+  }
+}
+
 .headline {
   margin-bottom: 40px;
 }
@@ -182,6 +208,12 @@ header .user img {
 
 .headline p {
   color: var(--color-white-30);
+}
+
+@media (width <= 600px) {
+  .headline h1 {
+    font-size: 60px;
+  }
 }
 
 .search {
@@ -334,6 +366,27 @@ header .user img {
   font-size: 20px;
 }
 
+@media (width <= 600px) {
+  .the-movie {
+    gap: 30px;
+  }
+
+  .the-movie .poster {
+    --width: 300px;
+  }
+}
+
+@media (width <= 720px) {
+  .the-movie {
+    display: block;
+  }
+
+  .the-movie .title {
+    margin-top: 50px;
+    font-size: 50px;
+  }
+}
+
 footer {
   text-align: center;
   padding: 40px 40px 60px;
@@ -346,6 +399,42 @@ footer a {
 
 footer a:hover {
   text-decoration: underline;
+}
+
+.about .photo {
+  background-size: cover;
+  border-radius: 10px;
+  width: 230px;
+  height: 230px;
+  margin: 0 auto 20px;
+}
+
+.about .name {
+  margin-bottom: 20px;
+  font-family: Oswald, "sans-serif";
+  font-size: 40px;
+}
+
+.about p {
+  text-align: center;
+  margin-bottom: 4px;
+  line-height: 1.5;
+}
+
+.about a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.about a:hover {
+  text-decoration: underline;
+}
+
+.not-found h1 {
+  color: var(--color-white-10);
+  text-align: center;
+  font-size: 70px;
+  font-weight: 700;
 }
 
 /*# sourceMappingURL=index.af20ad6e.css.map */
