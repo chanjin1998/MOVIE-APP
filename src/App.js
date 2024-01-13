@@ -1,7 +1,7 @@
 import { Component } from "./core/heropy";
 import TheHeader from "./components/TheHeader";
 import TheFooter from "./components/TheFooter";
-
+//default
 export default class App extends Component {
   render() {
     const theHeader = new TheHeader().el;
